@@ -1,0 +1,24 @@
+1. Turtle Sim
+ros2 run turtlesim turtlesim_node
+
+2. Turtle Sim Teleop
+ros2 run turtlesim turtle_teleop_key
+
+3. rqt
+rqt -> Service Caller
+rqt -> Message Publisher
+
+4. rqt_graph
+rqt_graph
+
+5. Service Command
+ros2 service call /reset std_srvs/srv/Empty
+ros2 service call /clear std_srvs/srv/Empty
+ros2 service call /turtle1/teleport_absolute turtlesim/srv/TeleportAbsolute "{x: 5.5, y: 10.0, theta: 0.0}"
+
+6. Topic Command
+ros2 topic echo /turtle1/pose
+ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 1.0, y: 0.0}, angular: {z: 1.0}}" -r 1
+
+7. Remap
+ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle2/cmd_vel
