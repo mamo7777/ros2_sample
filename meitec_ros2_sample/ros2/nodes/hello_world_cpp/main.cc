@@ -105,17 +105,23 @@ void CppTestNode::spawn_turtle2() {
   request->theta = 0.0;
   request->name = "turtle2";
 
-  while (!spawn_cli_->wait_for_service(std::chrono::seconds(1))) {
+  while (rclcpp::ok() && !spawn_cli_->wait_for_service(std::chrono::seconds(1))) {
     SPDLOG_WARN("Waiting for /spawn service...");
   }
 
-  auto result = spawn_cli_->async_send_request(request);
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) ==
-      rclcpp::FutureReturnCode::SUCCESS) {
-    SPDLOG_INFO("Spawned turtle2 successfully.");
-  } else {
-    SPDLOG_ERROR("Failed to spawn turtle2.");
+  if (!rclcpp::ok()) {
+    SPDLOG_WARN("Node is shutting down, aborting spawn request.");
+    return;
   }
+
+  auto callback_function = [this](rclcpp::Client<turtlesim::srv::Spawn>::SharedFuture response) {
+      if (!response.get()->name.empty()) {
+        SPDLOG_INFO("Spawned turtle2 successfully with name: {}", response.get()->name);
+      } else {
+        SPDLOG_ERROR("Failed to spawn turtle2.");
+      }
+    };
+  spawn_cli_->async_send_request(request, callback_function);
 }
 
 int main(int argc, char* argv[]) {
@@ -124,6 +130,8 @@ int main(int argc, char* argv[]) {
   auto node = std::make_shared<CppTestNode>();
 
   rclcpp::spin(node);
+
+  rclcpp::shutdown();
 
   return 0;
 }
