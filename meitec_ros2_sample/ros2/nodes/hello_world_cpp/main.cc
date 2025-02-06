@@ -4,6 +4,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "spdlog/spdlog.h"
 
+// https://github.com/ros2/common_interfaces/tree/jazzy
 #include <geometry_msgs/msg/twist.hpp>
 #include <std_srvs/srv/trigger.hpp>
 
@@ -14,7 +15,7 @@ class CppTestNode : public rclcpp::Node {
 
  private:
   void timer_callback();
-  void vel1_callback(const geometry_msgs::msg::Twist& msg);
+  void vel1_callback(const std::shared_ptr<geometry_msgs::msg::Twist> msg);
   void chg_dir_srv_callback(const std::shared_ptr<std_srvs::srv::Trigger::Request> req,
                             const std::shared_ptr<std_srvs::srv::Trigger::Response> res);
 
@@ -61,10 +62,10 @@ void CppTestNode::timer_callback() {
   vel1_publisher_->publish(message);
 }
 
-void CppTestNode::vel1_callback(const geometry_msgs::msg::Twist& msg) {
+void CppTestNode::vel1_callback(const std::shared_ptr<geometry_msgs::msg::Twist> msg) {
   auto vel2_msg = geometry_msgs::msg::Twist();
-  vel2_msg.linear.x = msg.linear.x * 2;
-  vel2_msg.angular.z = -msg.angular.z;
+  vel2_msg.linear.x = msg->linear.x * 2;
+  vel2_msg.angular.z = -msg->angular.z;
   vel2_publisher_->publish(vel2_msg);
 }
 
