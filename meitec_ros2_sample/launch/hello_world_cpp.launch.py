@@ -18,6 +18,7 @@ def generate_launch_description() -> launch.LaunchDescription:
             name="hello_world_cpp",
             package="meitec_ros2_sample",
             executable="hello_world_cpp",
+            output="screen",
         )
     )
 
