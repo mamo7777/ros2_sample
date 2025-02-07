@@ -10,7 +10,6 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <std_srvs/srv/set_bool.hpp>
-#include <turtlesim/srv/spawn.hpp>
 
 // クラス
 class CppTestNode : public rclcpp::Node {
@@ -26,8 +25,6 @@ class CppTestNode : public rclcpp::Node {
                             const std::shared_ptr<std_srvs::srv::Trigger::Response> res);
   void operation_srv_callback(const std::shared_ptr<std_srvs::srv::SetBool::Request> req,
                               const std::shared_ptr<std_srvs::srv::SetBool::Response> res);
-  bool check_turtle();
-  void spawn_turtle();
 
   // メンバー変数
   uint64_t counter_ = 0;
@@ -41,7 +38,6 @@ class CppTestNode : public rclcpp::Node {
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr turtle_1_cmd_vel_sub_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr change_direction_service_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr turtle_operation_service_;
-  rclcpp::Client<turtlesim::srv::Spawn>::SharedPtr spawn_cli_;
 };
 
 // コンストラクタ
@@ -66,9 +62,6 @@ CppTestNode::CppTestNode() : Node("cpp_test_node") {
   turtle_operation_service_ = create_service<std_srvs::srv::SetBool>(
       "/turtle_pub_operation", std::bind(&CppTestNode::operation_srv_callback, this,
                                              std::placeholders::_1, std::placeholders::_2));
-
-  // 亀のスポーンクライアントの初期化
-  spawn_cli_ = this->create_client<turtlesim::srv::Spawn>("/spawn");
 }
 
 // タイマーコールバック
@@ -91,12 +84,6 @@ void CppTestNode::timer_callback() {
     message.linear.x = 1.0;
     message.angular.z = 1.0 * turn_direction_;
     vel1_publisher_->publish(message);
-  }
-
-  // turtle2が存在しているか確認
-  if (!check_turtle()) {
-    // turtle2がなければスポーンサービスをCallする
-    spawn_turtle();
   }
 }
 
@@ -140,56 +127,6 @@ void CppTestNode::operation_srv_callback(const std::shared_ptr<std_srvs::srv::Se
   // Response作成
   res->success = true;
   res->message = res_msg;
-}
-
-
-
-// turtle2の存在確認関数(trueならturtle2がある)
-bool CppTestNode::check_turtle() {
-  // トピックの名前リストの作成
-  auto topic_names = this->get_topic_names_and_types();
-  for (const auto& topic : topic_names) {
-    // turtle2のポーズトピックがあるか確認
-    if (topic.first == "/turtle2/pose") {
-      // poseがあるのでturtle2出現中
-      return true;
-    }
-  }
-
-  // turtle2のposeが見当たらない
-  return false;
-}
-
-// turtleの追加スポーンクライアント
-void CppTestNode::spawn_turtle() {
-  auto request = std::make_shared<turtlesim::srv::Spawn::Request>();
-  // 追加スポーン時の生成位置
-  request->x = 2.5;
-  request->y = 4.0;
-  request->name = "turtle2";
-
-  // spawnサービスが存在しているか確認
-  // turtlesimがないとspawnは存在しない
-  while (rclcpp::ok() && !spawn_cli_->wait_for_service(std::chrono::seconds(1))) {
-    SPDLOG_WARN("Waiting for /spawn service...");
-  }
-
-  // シャットダウンリクエストが出たらなにもせず処理を終了する
-  if (!rclcpp::ok()) {
-    SPDLOG_WARN("Node is shutting down, aborting spawn request");
-    return;
-  }
-
-  // サービスレスポンスのコールバック関数
-  auto callback_function = [this](rclcpp::Client<turtlesim::srv::Spawn>::SharedFuture response) {
-    if (!response.get()->name.empty()) {
-      SPDLOG_INFO("Spawned turtle successfully with name: {}", response.get()->name);
-    } else {
-      SPDLOG_ERROR("Failed to spawn turtle");
-    }
-  };
-  // サービスのコール
-  spawn_cli_->async_send_request(request, callback_function);
 }
 
 // main関数
