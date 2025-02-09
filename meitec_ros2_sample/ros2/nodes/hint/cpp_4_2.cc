@@ -8,8 +8,8 @@
 
 // https://github.com/ros2/common_interfaces/tree/jazzy
 #include <geometry_msgs/msg/twist.hpp>
-#include <std_srvs/srv/trigger.hpp>
 #include <std_srvs/srv/set_bool.hpp>
+#include <std_srvs/srv/trigger.hpp>
 
 // クラス
 class CppTestNode : public rclcpp::Node {
@@ -61,7 +61,7 @@ CppTestNode::CppTestNode() : Node("cpp_test_node") {
   // 停止サービスの初期化
   turtle_operation_service_ = create_service<std_srvs::srv::SetBool>(
       "/turtle_pub_operation", std::bind(&CppTestNode::operation_srv_callback, this,
-                                             std::placeholders::_1, std::placeholders::_2));
+                                         std::placeholders::_1, std::placeholders::_2));
 }
 
 // タイマーコールバック
@@ -78,7 +78,7 @@ void CppTestNode::timer_callback() {
   }
   ++counter_;
 
-  if(operaton_) {
+  if (operaton_) {
     // 速度指令(turtle1)のパブリッシュ
     auto message = geometry_msgs::msg::Twist();
     message.linear.x = 1.0;
@@ -110,13 +110,13 @@ void CppTestNode::chg_dir_srv_callback(
 }
 
 // オペレーションサービスコールバック関数
-void CppTestNode::operation_srv_callback(const std::shared_ptr<std_srvs::srv::SetBool::Request> req,
-                            const std::shared_ptr<std_srvs::srv::SetBool::Response> res) {
-
+void CppTestNode::operation_srv_callback(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> req,
+    const std::shared_ptr<std_srvs::srv::SetBool::Response> res) {
   std::string res_msg;
 
   // リクエストに応じて処理を変える
-  if(req->data) {
+  if (req->data) {
     res_msg = "Start Operation Success";
     operaton_ = true;
   } else {

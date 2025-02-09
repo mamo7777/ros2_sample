@@ -10,4 +10,6 @@ BUILD_DIR="/root/ros2_sample/meitec_ros2_sample/build"
 #  colcon build
 #fi
 
+cp /root/ros2_sample/scripts/.vimrc ${HOME}/
+
 exec tmux
