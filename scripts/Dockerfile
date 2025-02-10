@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     libxcb-xinerama0 \
     git \
     vim-nox \
+    python3-pip \
+    pipx \
     curl
 
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
@@ -25,5 +27,9 @@ RUN echo "call plug#begin('~/.vim/plugged')" >> ~/.vimrc && \
     echo "call plug#end()" >> ~/.vimrc
 
 RUN vim +PlugInstall +qall || true
+
+RUN pipx install black
+
+RUN echo "alias black='/root/.local/share/pipx/venvs/black/bin/black'" >> /root/.bashrc
 
 ENTRYPOINT ["/root/ros2_sample/scripts/entrypoint.sh"]

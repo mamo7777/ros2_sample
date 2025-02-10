@@ -22,7 +22,7 @@ class PyTestNode(Node):
             self.get_logger().warn(f"[{self.counter}] Hello, World from PY!")
         else:
             self.get_logger().info(f"[{self.counter}] Hello, World from PY!")
-        
+
         self.counter = self.counter + 1
 
 
@@ -39,6 +39,7 @@ def main(args=None) -> None:
         if rclpy.ok():
             node.destroy_node()
             rclpy.shutdown()
+
 
 if __name__ == "__main__":
     main()
