@@ -1,3 +1,3 @@
 std_msgs/Header header
 
-uint64 timer_count
+uint32 timer_count
