@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# xhost +local:docker
+
 CONTAINER_NAME="meitec_ros2_container"
 
 if docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
