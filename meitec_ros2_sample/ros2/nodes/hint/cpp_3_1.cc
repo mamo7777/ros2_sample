@@ -1,10 +1,9 @@
-// ROS training program (C++)
+// ROS2 training program (C++)
 // Mamoru Uchiuda(Meitec)
 #include <chrono>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
-#include "spdlog/spdlog.h"
 
 // https://github.com/ros2/common_interfaces/tree/jazzy
 #include <geometry_msgs/msg/twist.hpp>
@@ -21,9 +20,9 @@ class CppTestNode : public rclcpp::Node {
   void vel1_callback(const std::shared_ptr<geometry_msgs::msg::Twist> msg);
 
   // メンバー変数
-  uint64_t counter_ = 0;
+  uint32_t counter_ = 0;
 
-  // ROS
+  // rclcpp
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr vel1_publisher_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr vel2_publisher_;
@@ -49,13 +48,13 @@ CppTestNode::CppTestNode() : Node("cpp_test_node") {
 void CppTestNode::timer_callback() {
   if (counter_ >= 100) {
     // Errorメッセージ
-    SPDLOG_ERROR("[{}]Hello, World from CPP!", counter_);
+    RCLCPP_ERROR(this->get_logger(), "[%d]Hello, World from CPP!", counter_);
   } else if (counter_ >= 50) {
     // Warningメッセージ
-    SPDLOG_WARN("[{}]Hello, World from CPP!", counter_);
+    RCLCPP_WARN(this->get_logger(), "[%d]Hello, World from CPP!", counter_);
   } else {
     // Infoメッセージ
-    SPDLOG_INFO("[{}]Hello, World from CPP!", counter_);
+    RCLCPP_INFO(this->get_logger(), "[%d]Hello, World from CPP!", counter_);
   }
   ++counter_;
 

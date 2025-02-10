@@ -1,10 +1,9 @@
-// ROS training program (C++)
+// ROS2 training program (C++)
 // Mamoru Uchiuda(Meitec)
 #include <chrono>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
-#include "spdlog/spdlog.h"
 
 // https://github.com/ros2/common_interfaces/tree/jazzy
 #include <geometry_msgs/msg/twist.hpp>
@@ -30,11 +29,11 @@ class CppTestNode : public rclcpp::Node {
   void spawn_turtle();
 
   // メンバー変数
-  uint64_t counter_ = 0;
+  uint32_t counter_ = 0;
   int8_t turn_direction_ = 1;
   bool operaton_ = true;
 
-  // ROS
+  // rclcpp
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr vel1_publisher_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr vel2_publisher_;
@@ -75,13 +74,13 @@ CppTestNode::CppTestNode() : Node("cpp_test_node") {
 void CppTestNode::timer_callback() {
   if (counter_ >= 100) {
     // Errorメッセージ
-    SPDLOG_ERROR("[{}]Hello, World from CPP!", counter_);
+    RCLCPP_ERROR(this->get_logger(), "[%d]Hello, World from CPP!", counter_);
   } else if (counter_ >= 50) {
     // Warningメッセージ
-    SPDLOG_WARN("[{}]Hello, World from CPP!", counter_);
+    RCLCPP_WARN(this->get_logger(), "[%d]Hello, World from CPP!", counter_);
   } else {
     // Infoメッセージ
-    SPDLOG_INFO("[{}]Hello, World from CPP!", counter_);
+    RCLCPP_INFO(this->get_logger(), "[%d]Hello, World from CPP!", counter_);
   }
   ++counter_;
 
@@ -169,21 +168,22 @@ void CppTestNode::spawn_turtle() {
   // spawnサービスが存在しているか確認
   // turtlesimがないとspawnは存在しない
   while (rclcpp::ok() && !spawn_cli_->wait_for_service(std::chrono::seconds(1))) {
-    SPDLOG_WARN("Waiting for /spawn service...");
+    RCLCPP_WARN(this->get_logger(), "Waiting for /spawn service...");
   }
 
   // シャットダウンリクエストが出たらなにもせず処理を終了する
   if (!rclcpp::ok()) {
-    SPDLOG_WARN("Node is shutting down, aborting spawn request");
+    RCLCPP_WARN(this->get_logger(), "Node is shutting down, aborting spawn request");
     return;
   }
 
   // サービスレスポンスのコールバック関数
   auto callback_function = [this](rclcpp::Client<turtlesim::srv::Spawn>::SharedFuture response) {
     if (!response.get()->name.empty()) {
-      SPDLOG_INFO("Spawned turtle successfully with name: {}", response.get()->name);
+      RCLCPP_INFO(this->get_logger(), "Spawned turtle successfully with name: %s",
+                  response.get()->name.c_str());
     } else {
-      SPDLOG_ERROR("Failed to spawn turtle");
+      RCLCPP_ERROR(this->get_logger(), "Failed to spawn turtle");
     }
   };
   // サービスのコール

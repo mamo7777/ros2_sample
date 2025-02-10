@@ -1,10 +1,9 @@
-// ROS training program (C++)
+// ROS2 training program (C++)
 // Mamoru Uchiuda(Meitec)
 #include <chrono>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
-#include "spdlog/spdlog.h"
 
 // クラス
 class CppTestNode : public rclcpp::Node {
@@ -17,9 +16,9 @@ class CppTestNode : public rclcpp::Node {
   void timer_callback();
 
   // メンバー変数
-  uint64_t counter_ = 0;
+  uint32_t counter_ = 0;
 
-  // ROS
+  // rclcpp
   rclcpp::TimerBase::SharedPtr timer_;
 };
 
@@ -34,15 +33,15 @@ CppTestNode::CppTestNode() : Node("cpp_test_node") {
 void CppTestNode::timer_callback() {
   if (counter_ >= 10) {
     // Errorメッセージ
-    SPDLOG_ERROR("[{}]Hello, World from CPP!", counter_);
+    RCLCPP_ERROR(this->get_logger(), "[%d]Hello, World from CPP!", counter_);
     rclcpp::shutdown();
     return;
   } else if (counter_ >= 5) {
     // Warningメッセージ
-    SPDLOG_WARN("[{}]Hello, World from CPP!", counter_);
+    RCLCPP_WARN(this->get_logger(), "[%d]Hello, World from CPP!", counter_);
   } else {
     // Infoメッセージ
-    SPDLOG_INFO("[{}]Hello, World from CPP!", counter_);
+    RCLCPP_INFO(this->get_logger(), "[%d]Hello, World from CPP!", counter_);
   }
   ++counter_;
 }
