@@ -6,11 +6,24 @@ RUN apt-get update && apt-get install -y \
     vim \
     x11-apps \
     build-essential \
-    libxcb-xinerama0 
+    clang-format \
+    libxcb-xinerama0 \
+    git \
+    vim-nox \
+    curl
+
+RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
 RUN echo "source /root/ros2_sample/meitec_ros2_sample/install/setup.bash" >> /root/.bashrc
 
 WORKDIR /root/ros2_sample
+
+RUN echo "call plug#begin('~/.vim/plugged')" >> ~/.vimrc && \
+    echo "Plug 'rhysd/vim-clang-format'" >> ~/.vimrc && \
+    echo "call plug#end()" >> ~/.vimrc
+
+RUN vim +PlugInstall +qall || true
 
 ENTRYPOINT ["/root/ros2_sample/scripts/entrypoint.sh"]

@@ -66,3 +66,8 @@ let g:hi_insert = 'highlight StatusLine guifg=darkblue guibg=darkyellow gui=none
 					return hl
 					endfunction
 
+call plug#begin()
+Plug 'rhysd/vim-clang-format'
+call plug#end()
+
+nnoremap <S-F> :ClangFormat<CR>
