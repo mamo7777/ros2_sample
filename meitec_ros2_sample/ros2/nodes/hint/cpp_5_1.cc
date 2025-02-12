@@ -31,7 +31,7 @@ class CppTestNode : public rclcpp::Node {
   // メンバー変数
   uint32_t counter_ = 0;
   int8_t turn_direction_ = 1;
-  bool operaton_ = true;
+  bool operation_ = true;
 
   // rclcpp
   rclcpp::TimerBase::SharedPtr timer_;
@@ -84,7 +84,7 @@ void CppTestNode::timer_callback() {
   }
   ++counter_;
 
-  if (operaton_) {
+  if (operation_) {
     // 速度指令(turtle1)のパブリッシュ
     auto message = geometry_msgs::msg::Twist();
     message.linear.x = 1.0;
@@ -130,10 +130,10 @@ void CppTestNode::operation_srv_callback(
   // リクエストに応じて処理を変える
   if (req->data) {
     res_msg = "Start Operation Success";
-    operaton_ = true;
+    operation_ = true;
   } else {
     res_msg = "Stop Operation Success";
-    operaton_ = false;
+    operation_ = false;
   }
 
   // Response作成

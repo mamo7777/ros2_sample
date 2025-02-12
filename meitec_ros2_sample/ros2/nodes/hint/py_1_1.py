@@ -12,11 +12,12 @@ class PyTestNode(Node):
     def __init__(self) -> None:
         super().__init__("py_test_node")
 
-        self._timer_period = 1.0
+        # インスタンス変数
         self._counter = 0
 
         # タイマーコールバックの初期化
-        self._timer = self.create_timer(self._timer_period, self._timer_callback)
+        timer_period = 1.0
+        self._timer = self.create_timer(timer_period, self._timer_callback)
 
     # タイマーコールバック
     def _timer_callback(self) -> None:

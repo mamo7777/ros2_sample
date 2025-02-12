@@ -32,7 +32,7 @@ class CppTestNode : public rclcpp::Node {
   // メンバー変数
   uint32_t counter_ = 0;
   int8_t turn_direction_ = 1;
-  bool operaton_ = true;
+  bool operation_ = true;
 
   // rclcpp
   rclcpp::TimerBase::SharedPtr timer_;
@@ -56,7 +56,7 @@ CppTestNode::CppTestNode() : Node("cpp_test_node") {
   vel2_publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/turtle2/cmd_vel", 10);
 
   // オリジナルメッセージパブリッシャーの初期化
-  hello_publisher_ = this->create_publisher<meitec_ros2_sample::msg::HelloSample>("/hello_msg", 10);
+  hello_publisher_ = this->create_publisher<meitec_ros2_sample::msg::HelloSample>("~/hello_msg", 10);
 
   // 速度指令サブスクライバーの初期化
   turtle_1_cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
@@ -89,7 +89,7 @@ void CppTestNode::timer_callback() {
   }
   ++counter_;
 
-  if (operaton_) {
+  if (operation_) {
     // 速度指令(turtle1)のパブリッシュ
     auto message = geometry_msgs::msg::Twist();
     message.linear.x = 1.0;
@@ -107,7 +107,7 @@ void CppTestNode::timer_callback() {
   auto hello_msg = meitec_ros2_sample::msg::HelloSample();
   auto now = get_clock()->now();
   hello_msg.header.stamp = now;
-  hello_msg.operation = operaton_;
+  hello_msg.operation = operation_;
   hello_msg.turn_direction = turn_direction_;
   hello_msg.timer_count = counter_;
   hello_publisher_->publish(hello_msg);
@@ -144,10 +144,10 @@ void CppTestNode::operation_srv_callback(
   // リクエストに応じて処理を変える
   if (req->data) {
     res_msg = "Start Operation Success";
-    operaton_ = true;
+    operation_ = true;
   } else {
     res_msg = "Stop Operation Success";
-    operaton_ = false;
+    operation_ = false;
   }
 
   // Response作成

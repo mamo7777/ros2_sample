@@ -5,6 +5,8 @@
 import rclpy
 from rclpy.node import Node
 
+from geometry_msgs.msg import Twist
+
 
 # クラス
 class PyTestNode(Node):
@@ -19,22 +21,28 @@ class PyTestNode(Node):
         timer_period = 1.0
         self._timer = self.create_timer(timer_period, self._timer_callback)
 
+        # 速度指令パブリッシャーの初期化
+        self._vel_publisher = self.create_publisher(Twist, "/turtle1/cmd_vel", 10)
+
     # タイマーコールバック
     def _timer_callback(self) -> None:
         # Errorメッセージ
-        if self._counter >= 10:
+        if self._counter >= 100:
             self.get_logger().error(f"[{self._counter}] Hello, World from PY!")
-            self.destroy_node()
-            rclpy.shutdown()
-            return
         # Warningメッセージ
-        elif self._counter >= 5:
+        elif self._counter >= 50:
             self.get_logger().warn(f"[{self._counter}] Hello, World from PY!")
         # Infoメッセージ
         else:
             self.get_logger().info(f"[{self._counter}] Hello, World from PY!")
 
         self._counter = self._counter + 1
+
+        # 速度指令(turtle1)のパブリッシュ
+        message = Twist()
+        message.linear.x = 1.0
+        message.angular.z = 1.0
+        self._vel_publisher.publish(message)
 
 
 # main関数
