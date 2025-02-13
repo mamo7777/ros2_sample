@@ -63,8 +63,8 @@ CppTestNode::CppTestNode() : Node("cpp_test_node") {
                                              std::placeholders::_1, std::placeholders::_2));
   // 停止サービスの初期化
   turtle_operation_service_ = create_service<std_srvs::srv::SetBool>(
-      "/turtle_pub_operation", std::bind(&CppTestNode::operation_srv_callback, this,
-                                         std::placeholders::_1, std::placeholders::_2));
+      "~/turtle_pub_operation", std::bind(&CppTestNode::operation_srv_callback, this,
+                                          std::placeholders::_1, std::placeholders::_2));
 
   // 亀のスポーンクライアントの初期化
   spawn_cli_ = this->create_client<turtlesim::srv::Spawn>("/spawn");

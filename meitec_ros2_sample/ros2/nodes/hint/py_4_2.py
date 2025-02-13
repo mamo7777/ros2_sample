@@ -40,7 +40,7 @@ class PyTestNode(Node):
 
         # 停止サービスの初期化
         self._turtle_operation_service = self.create_service(
-            SetBool, "/turtle_pub_operation", self._operation_srv_callback
+            SetBool, "~/turtle_pub_operation", self._operation_srv_callback
         )
 
     # タイマーコールバック
