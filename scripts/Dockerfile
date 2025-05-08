@@ -18,7 +18,9 @@ RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
-RUN echo "source /root/ros2_sample/meitec_ros2_sample/install/setup.bash" >> /root/.bashrc
+RUN echo "if [ -f /root/ros2_sample/meitec_ros2_sample/install/setup.bash ]; then" >> /root/.bashrc && \
+    echo "  source /root/ros2_sample/meitec_ros2_sample/install/setup.bash" >> /root/.bashrc && \
+    echo "fi" >> /root/.bashrc
 
 WORKDIR /root/ros2_sample
 
