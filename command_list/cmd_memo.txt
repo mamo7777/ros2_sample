@@ -20,7 +20,7 @@ ros2 service call /clear std_srvs/srv/Empty
 ros2 service type /turtle1/set_pen
 ros2 interface show turtlesim/srv/SetPen
 ros2 service call /turtle1/set_pen turtlesim/srv/SetPen "{r: 255, g: 0, b: 0, width: 10}"
-ros2 service call /turtle1/teleport_absolute turtlesim/srv/TeleportAbsolute "{x: 5.5, y: 3.0, theta: 0.0}“
+ros2 service call /turtle1/teleport_absolute turtlesim/srv/TeleportAbsolute "{x: 5.5, y: 3.0, theta: 0.0}"
 
 
 5. Topic Command
